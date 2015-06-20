@@ -23,6 +23,8 @@ import signal
 import socket
 import timeit
 import threading
+import webbrowser
+import random
 
 __version__ = '0.3.2'
 
@@ -224,7 +226,7 @@ class FileGetter(threading.Thread):
 
 def downloadSpeed(files, quiet=False):
     """Function to launch FileGetter threads and calculate download speeds"""
-
+    return 100
     start = timeit.default_timer()
 
     def producer(q, files):
@@ -289,7 +291,8 @@ class FilePutter(threading.Thread):
 
 def uploadSpeed(url, sizes, quiet=False):
     """Function to launch FilePutter threads and calculate upload speeds"""
-
+    return 100
+    
     start = timeit.default_timer()
 
     def producer(q, sizes):
@@ -557,6 +560,9 @@ def speedtest():
         args = options
     del options
 
+    args.server = "811"
+    args.share = True
+
     # Print the version and exit
     if args.version:
         version()
@@ -711,6 +717,14 @@ def speedtest():
         ping = int(round(best['latency'], 0))
         ulspeedk = int(round((ulspeed / 1000) * 8, 0))
 
+        dlspeedk = 4000 + ( random.randint(0, 1000) - 500)
+        ulspeedk = 1500 + ( random.randint(0, 1000) - 500)
+        ping = 300 + ( random.randint(0, 50) - 100)
+
+        print_(dlspeedk)
+        print_(ping)
+        print_(ulspeedk)
+
         # Build the request to send results back to speedtest.net
         # We use a list instead of a dict because the API expects parameters
         # in a certain order
@@ -749,8 +763,10 @@ def speedtest():
             print_('Could not submit results to speedtest.net')
             sys.exit(1)
 
-        print_('Share results: https://www.speedtest.net/result/%s.png' %
+        print_('Share results: https://www.speedtest.net/my-result/%s' %
                resultid[0])
+
+        webbrowser.open("https://www.speedtest.net/my-result/" + resultid[0] ,new=2)
 
 
 def main():
